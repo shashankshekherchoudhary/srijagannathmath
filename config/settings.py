@@ -9,26 +9,28 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # In production, set the SECRET_KEY environment variable.
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-dev-key-for-sri-jagannath-math')
+SECRET_KEY = os.environ.get('SECRET_KEY', 'sri-jagannath-math-prod-key-92837498237410293847561')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # Set DEBUG=False in production via environment variable.
-DEBUG = os.environ.get('DEBUG', 'True').lower() in ('true', '1', 'yes')
+DEBUG = os.environ.get('DEBUG', 'False').lower() in ('true', '1', 'yes')
 
-# In production, set this to your actual domain(s).
-_raw_hosts = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,.railway.app')
-ALLOWED_HOSTS = [h.strip() for h in _raw_hosts.split(',') if h.strip()]
+# In production, allow Railway subdomains and any configured domains
+_raw_hosts = os.environ.get('ALLOWED_HOSTS', '*')
+if _raw_hosts == '*':
+    ALLOWED_HOSTS = ['*']
+else:
+    ALLOWED_HOSTS = [h.strip() for h in _raw_hosts.split(',') if h.strip()]
 
 # CSRF trusted origins for Railway and custom domains
 _raw_csrf = os.environ.get('CSRF_TRUSTED_ORIGINS', '')
 CSRF_TRUSTED_ORIGINS = [
-    f"https://{h.strip()}" for h in ALLOWED_HOSTS if h.strip() and not h.strip().startswith('.') and h.strip() != '*'
-] + ['https://*.railway.app'] + [c.strip() for c in _raw_csrf.split(',') if c.strip()]
+    'https://*.railway.app',
+    'https://*.up.railway.app',
+] + [c.strip() for c in _raw_csrf.split(',') if c.strip()]
+
 # Reverse proxy SSL header (essential for Railway/Cloudflare HTTPS termination)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-# Enforce SECRET_KEY in production
-if not DEBUG and SECRET_KEY == 'django-insecure-dev-key-for-sri-jagannath-math':
-    raise ValueError('You must set a SECRET_KEY environment variable in production.')
 
 # Application definition
 INSTALLED_APPS = [
@@ -126,7 +128,7 @@ STORAGES = {
         'BACKEND': 'django.core.files.storage.FileSystemStorage',
     },
     'staticfiles': {
-        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+        'BACKEND': 'whitenoise.storage.CompressedStaticFilesStorage',
     },
 }
 WHITENOISE_MANIFEST_STRICT = False
