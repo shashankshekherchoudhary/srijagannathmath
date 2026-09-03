@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold" style="color: #8B0000;">Events</h1>
+        <hr class="w-25 mx-auto" style="border-top: 3px solid #DAA520;">
+    </div>
+
+    <!-- Upcoming Events -->
+    <section class="mb-5">
+        <h2 class="mb-4 text-center" style="color: #2C1810;">Upcoming Events</h2>
+        {% if upcoming_events %}
+            <div class="row g-4">
+                {% for event in upcoming_events %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm event-card">
+                        {% if event.image %}
+                            <img src="{{ event.image.url }}" class="card-img-top object-fit-cover" alt="{{ event.title }}" style="height: 220px;">
+                        {% else %}
+                            <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 220px; background: linear-gradient(135deg, #FFF8DC, #DAA520);">
+                                <i class="bi bi-calendar-event fs-1 text-white"></i>
+                            </div>
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold" style="color: #8B0000;">{{ event.title }}</h5>
+                            <div class="d-flex flex-column gap-2 mb-3 mt-3">
+                                <div class="text-muted small"><i class="bi bi-calendar-check me-2 text-primary"></i>{{ event.date|date:'F j, Y' }}</div>
+                                {% if event.time %}
+                                <div class="text-muted small"><i class="bi bi-clock me-2 text-primary"></i>{{ event.time|time:'g:i A' }}</div>
+                                {% endif %}
+                                {% if event.location %}
+                                <div class="text-muted small"><i class="bi bi-geo-alt me-2 text-primary"></i>{{ event.location }}</div>
+                                {% endif %}
+                            </div>
+                            <p class="card-text">{{ event.description|truncatewords:20 }}</p>
+                        </div>
+                        <div class="card-footer bg-white border-top-0 pb-3">
+                            <a href="{% url 'event_detail' event.slug %}" class="btn w-100" style="background-color: #FF6B00; color: white;">View Details</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% if upcoming_events.has_other_pages %}
+            <nav aria-label="Upcoming events pagination" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if upcoming_events.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?upcoming_page={{ upcoming_events.previous_page_number }}">&laquo;</a></li>
+                    {% endif %}
+                    {% for num in upcoming_events.paginator.page_range %}
+                        {% if upcoming_events.number == num %}
+                        <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                        {% elif num > upcoming_events.number|add:'-3' and num < upcoming_events.number|add:'3' %}
+                        <li class="page-item"><a class="page-link" href="?upcoming_page={{ num }}">{{ num }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if upcoming_events.has_next %}
+                    <li class="page-item"><a class="page-link" href="?upcoming_page={{ upcoming_events.next_page_number }}">&raquo;</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        {% else %}
+            <div class="alert alert-light text-center py-4 shadow-sm border-0">
+                <p class="mb-0 text-muted">No upcoming events at this time.</p>
+            </div>
+        {% endif %}
+    </section>
+
+    <!-- Past Events -->
+    <section>
+        <h2 class="mb-4 text-center mt-5" style="color: #6c757d;">Past Events</h2>
+        {% if past_events %}
+            <div class="row g-4">
+                {% for event in past_events %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border border-light shadow-sm bg-light" style="opacity: 0.9;">
+                        {% if event.image %}
+                            <img src="{{ event.image.url }}" class="card-img-top object-fit-cover grayscale" alt="{{ event.title }}" style="height: 180px; filter: grayscale(50%);">
+                        {% else %}
+                            <div class="card-img-top d-flex align-items-center justify-content-center bg-secondary" style="height: 180px;">
+                                <i class="bi bi-calendar-event fs-2 text-white-50"></i>
+                            </div>
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title text-muted">{{ event.title }}</h5>
+                            <div class="text-muted small mb-3"><i class="bi bi-calendar-check me-2"></i>{{ event.date|date:'F j, Y' }}</div>
+                            <p class="card-text text-muted small">{{ event.description|truncatewords:15 }}</p>
+                        </div>
+                        <div class="card-footer bg-light border-top-0 pb-3">
+                            <a href="{% url 'event_detail' event.slug %}" class="btn btn-outline-secondary btn-sm w-100">View Details</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% if past_events.has_other_pages %}
+            <nav aria-label="Past events pagination" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if past_events.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?past_page={{ past_events.previous_page_number }}">&laquo;</a></li>
+                    {% endif %}
+                    {% for num in past_events.paginator.page_range %}
+                        {% if past_events.number == num %}
+                        <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                        {% elif num > past_events.number|add:'-3' and num < past_events.number|add:'3' %}
+                        <li class="page-item"><a class="page-link" href="?past_page={{ num }}">{{ num }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if past_events.has_next %}
+                    <li class="page-item"><a class="page-link" href="?past_page={{ past_events.next_page_number }}">&raquo;</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        {% else %}
+            <div class="alert alert-light text-center py-4 shadow-sm border-0 bg-light">
+                <p class="mb-0 text-muted">No past events found.</p>
+            </div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold" style="color: #8B0000;">Gallery</h1>
+        <hr class="w-25 mx-auto" style="border-top: 3px solid #DAA520;">
+        <p class="lead text-muted">Glimpses of divine moments, festivals, and the serene environment of the Math.</p>
+    </div>
+
+    {% if images %}
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for image in images %}
+            <div class="col">
+                <div class="card h-100 border-0 shadow-sm gallery-card overflow-hidden" style="cursor: pointer;"
+                     data-bs-toggle="modal"
+                     data-bs-target="#galleryModal"
+                     data-img-src="{{ image.image.url }}"
+                     data-img-title="{{ image.title|default:'' }}"
+                     data-img-desc="{{ image.description|default:'' }}">
+                    <div class="ratio ratio-4x3">
+                        <img src="{{ image.image.url }}" class="card-img-top object-fit-cover gallery-img" alt="{{ image.title|default:'Gallery Image' }}">
+                    </div>
+                    <div class="card-img-overlay gallery-overlay d-flex flex-column justify-content-end text-white p-3">
+                        <h5 class="card-title mb-0">{{ image.title|default:'View Image' }}</h5>
+                        <small><i class="bi bi-zoom-in me-1"></i>Click to enlarge</small>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if images.has_other_pages %}
+        <nav aria-label="Gallery pagination" class="mt-5">
+            <ul class="pagination justify-content-center">
+                {% if images.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page={{ images.previous_page_number }}">&laquo; Previous</a></li>
+                {% endif %}
+                {% for num in images.paginator.page_range %}
+                    {% if images.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                    {% elif num > images.number|add:'-3' and num < images.number|add:'3' %}
+                    <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                {% if images.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ images.next_page_number }}">Next &raquo;</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+
+    {% else %}
+        <div class="text-center py-5 bg-light rounded shadow-sm">
+            <i class="bi bi-images text-muted fs-1 mb-3 d-block"></i>
+            <h4 class="text-muted">Gallery is empty</h4>
+            <p class="mb-0">Images will be added soon.</p>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Modal Structure -->
+<div class="modal fade" id="galleryModal" tabindex="-1" aria-labelledby="galleryModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header border-bottom-0 bg-dark text-white">
+                <h5 class="modal-title" id="galleryModalTitle"></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0 bg-dark text-center">
+                <img src="" id="galleryModalImage" class="img-fluid" alt="Full size image">
+            </div>
+            <div class="modal-footer border-top-0 bg-dark text-white text-start d-block" id="galleryModalDescriptionContainer">
+                <p class="mb-0" id="galleryModalDescription"></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

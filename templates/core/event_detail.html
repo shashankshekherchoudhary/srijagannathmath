@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-decoration-none text-muted">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'events' %}" class="text-decoration-none text-muted">Events</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ event.title }}</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <div class="card border-0 shadow-lg overflow-hidden">
+                {% if event.image %}
+                    <img src="{{ event.image.url }}" class="card-img-top w-100 object-fit-cover" alt="{{ event.title }}" style="max-height: 400px;">
+                {% endif %}
+                
+                <div class="card-body p-5">
+                    <h1 class="card-title fw-bold mb-4" style="color: #8B0000;">{{ event.title }}</h1>
+                    
+                    <div class="d-flex flex-wrap gap-4 mb-5 p-3 rounded" style="background-color: #FFF8DC;">
+                        <div class="d-flex align-items-center text-dark">
+                            <i class="bi bi-calendar-event fs-4 me-2" style="color: #FF6B00;"></i>
+                            <div>
+                                <small class="text-muted d-block lh-1">Date</small>
+                                <span class="fw-medium">{{ event.date|date:'F j, Y' }}</span>
+                            </div>
+                        </div>
+                        
+                        {% if event.time %}
+                        <div class="d-flex align-items-center text-dark">
+                            <i class="bi bi-clock fs-4 me-2" style="color: #FF6B00;"></i>
+                            <div>
+                                <small class="text-muted d-block lh-1">Time</small>
+                                <span class="fw-medium">{{ event.time|time:'g:i A' }}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if event.location %}
+                        <div class="d-flex align-items-center text-dark">
+                            <i class="bi bi-geo-alt fs-4 me-2" style="color: #FF6B00;"></i>
+                            <div>
+                                <small class="text-muted d-block lh-1">Location</small>
+                                <span class="fw-medium">{{ event.location }}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="card-text fs-5" style="line-height: 1.8; color: #2C1810;">
+                        {{ event.description|linebreaks }}
+                    </div>
+                    
+                    <div class="mt-5 text-center">
+                        <a href="{% url 'events' %}" class="btn btn-outline-dark px-4 py-2"><i class="bi bi-arrow-left me-2"></i>Back to Events</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

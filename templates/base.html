@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sri Jagannath Math, Tetri-Dandari, Begusarai, Bihar — A sacred abode of Lord Jagannath dedicated to spiritual enlightenment and service to humanity.">
+    <title>{% block title %}Sri Jagannath Math{% endblock %}</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    {% block extra_css %}{% endblock %}
+
+    <!-- Honeypot anti-spam: hide the field from real users -->
+    <style>.ohnohoney { position: absolute; left: -9999px; opacity: 0; }</style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-temple">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">🛕 Sri Jagannath Math</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}" href="{% url 'about' %}">About</a></li>
+                    <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'timings' %}active{% endif %}" href="{% url 'timings' %}">Timings</a></li>
+                    <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'events' or request.resolver_match.url_name == 'event_detail' %}active{% endif %}" href="{% url 'events' %}">Events</a></li>
+                    <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'announcements' %}active{% endif %}" href="{% url 'announcements' %}">Announcements</a></li>
+                    <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'gallery' %}active{% endif %}" href="{% url 'gallery' %}">Gallery</a></li>
+                    <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'donate' %}active{% endif %}" href="{% url 'donate' %}">Donate</a></li>
+                    <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}" href="{% url 'contact' %}">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5 class="footer-heading">Sri Jagannath Math</h5>
+                    <p class="footer-desc">A sacred abode of Lord Jagannath, dedicated to spiritual enlightenment and service to humanity.</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5 class="footer-heading">Quick Links</h5>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'home' %}">Home</a></li>
+                        <li><a href="{% url 'about' %}">About</a></li>
+                        <li><a href="{% url 'timings' %}">Timings</a></li>
+                        <li><a href="{% url 'events' %}">Events</a></li>
+                        <li><a href="{% url 'announcements' %}">Announcements</a></li>
+                        <li><a href="{% url 'gallery' %}">Gallery</a></li>
+                        <li><a href="{% url 'donate' %}">Donate</a></li>
+                        <li><a href="{% url 'contact' %}">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5 class="footer-heading">Contact Info</h5>
+                    <ul class="list-unstyled footer-contact">
+                        <li>
+                            <i class="bi bi-geo-alt-fill"></i>
+                            <span>{% if global_temple_info and global_temple_info.address %}{{ global_temple_info.address }}{% else %}Tetri-Dandari, Begusarai, Bihar{% endif %}</span>
+                        </li>
+                        <li>
+                            <i class="bi bi-telephone-fill"></i>
+                            <span>{% if global_temple_info and global_temple_info.phone %}{{ global_temple_info.phone }}{% else %}Not available{% endif %}</span>
+                        </li>
+                        <li>
+                            <i class="bi bi-envelope-fill"></i>
+                            <span>{% if global_temple_info and global_temple_info.email %}{{ global_temple_info.email }}{% else %}Not available{% endif %}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container">
+                <p>&copy; {% now "Y" %} Sri Jagannath Math. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom JS -->
+    <script src="{% static 'js/main.js' %}"></script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,1013 @@
+/*
+ * Sri Jagannath Math Django Website Stylesheet
+ * Spiritual, peaceful, elegant, traditional Indian, modern, professional
+ */
+
+/* ==========================================================================
+   1. CSS Variables & Reset
+   ========================================================================== */
+:root {
+  --saffron: #FF6B00;
+  --saffron-text: #C84B00; /* WCAG AA accessible contrast on white backgrounds */
+  --saffron-dark: #E55B00;
+  --brown-dark: #2C1810;
+  --gold: #DAA520;
+  --cream: #FFF8DC;
+  --cream-light: #FFF5E6;
+  --deep-red: #8B0000;
+  --white: #FFFFFF;
+  --text-color: #333333;
+  --text-muted: #666666;
+  --shadow-warm: 0 4px 15px rgba(44, 24, 16, 0.1);
+  --shadow-warm-hover: 0 8px 25px rgba(44, 24, 16, 0.2);
+  --font-heading: 'Playfair Display', serif;
+  --font-body: 'Poppins', sans-serif;
+  --transition-smooth: all 0.3s ease-in-out;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--text-color);
+  background-color: var(--white);
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  color: var(--brown-dark);
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+a {
+  text-decoration: none;
+  color: var(--saffron-text);
+  transition: var(--transition-smooth);
+}
+
+a:hover {
+  color: var(--saffron-dark);
+}
+
+/* Accessibility focus-visible indicators */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+.btn:focus-visible {
+  outline: 3px solid var(--gold) !important;
+  outline-offset: 2px !important;
+}
+
+/* ==========================================================================
+   2. Navbar (.navbar-temple)
+   ========================================================================== */
+.navbar-temple {
+  background-color: var(--brown-dark);
+  padding: 1rem 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  transition: var(--transition-smooth);
+  z-index: 1030;
+}
+
+.navbar-temple.navbar-scrolled {
+  padding: 0.5rem 0;
+  background-color: rgba(44, 24, 16, 0.95);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+}
+
+.navbar-brand {
+  font-family: var(--font-heading);
+  color: var(--gold) !important;
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.navbar-temple .nav-link {
+  color: var(--cream) !important;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  margin: 0 0.25rem;
+  transition: var(--transition-smooth);
+  position: relative;
+}
+
+.navbar-temple .nav-link:hover,
+.navbar-temple .nav-link.active {
+  color: var(--gold) !important;
+}
+
+.navbar-temple .nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background-color: var(--gold);
+  transition: var(--transition-smooth);
+  transform: translateX(-50%);
+}
+
+.navbar-temple .nav-link:hover::after,
+.navbar-temple .nav-link.active::after {
+  width: 80%;
+}
+
+.navbar-toggler {
+  border-color: rgba(255, 255, 255, 0.1);
+  padding: 0.25rem 0.5rem;
+}
+
+.navbar-toggler:focus {
+  box-shadow: 0 0 0 3px rgba(218, 165, 32, 0.25);
+}
+
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(218, 165, 32, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* ==========================================================================
+   3. Hero Section (.hero-section)
+   ========================================================================== */
+.hero-section {
+  min-height: 85vh;
+  background: linear-gradient(135deg, var(--saffron) 0%, var(--brown-dark) 100%);
+  position: relative;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  overflow: hidden;
+  padding: 100px 0;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 8%);
+  background-size: 50px 50px;
+  opacity: 0.5;
+  z-index: 1;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+}
+
+.hero-title {
+  font-family: var(--font-heading);
+  color: var(--white);
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  margin-bottom: 1rem;
+}
+
+.hero-subtitle {
+  color: var(--gold);
+  font-size: clamp(1.2rem, 2vw, 1.8rem);
+  font-family: var(--font-heading);
+  margin-bottom: 1.5rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.hero-text {
+  color: var(--cream);
+  max-width: 700px;
+  margin: 0 auto 2.5rem;
+  font-size: 1.1rem;
+  line-height: 1.8;
+}
+
+/* ==========================================================================
+   4. Section Styling
+   ========================================================================== */
+.section-padding {
+  padding: 80px 0;
+}
+
+.section-bg-light {
+  background-color: var(--cream-light);
+}
+
+.section-bg-dark {
+  background-color: var(--brown-dark);
+  color: var(--cream);
+}
+
+.section-heading {
+  font-family: var(--font-heading);
+  color: var(--brown-dark);
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 3rem;
+  position: relative;
+  padding-bottom: 15px;
+}
+
+.section-heading::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background-color: var(--gold);
+  border-radius: 2px;
+}
+
+.section-heading.text-white {
+  color: var(--white);
+}
+
+.section-heading.text-white::after {
+  background-color: var(--saffron);
+}
+
+/* ==========================================================================
+   5. Cards (.card)
+   ========================================================================== */
+.card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: var(--shadow-warm);
+  overflow: hidden;
+  transition: var(--transition-smooth);
+  background-color: var(--white);
+  height: 100%;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-warm-hover);
+}
+
+.card-img-top {
+  height: 220px;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.card:hover .card-img-top {
+  transform: scale(1.05);
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+.card-title {
+  font-family: var(--font-heading);
+  color: var(--brown-dark);
+  font-weight: 600;
+  font-size: 1.25rem;
+  margin-bottom: 0.75rem;
+}
+
+/* ==========================================================================
+   6. Timings Table/Cards
+   ========================================================================== */
+.timing-container {
+  background-color: var(--white);
+  border-radius: 12px;
+  box-shadow: var(--shadow-warm);
+  padding: 2rem;
+}
+
+.timing-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1rem;
+  background-color: var(--cream-light);
+  border-radius: 8px;
+  border-left: 4px solid var(--gold);
+  transition: var(--transition-smooth);
+}
+
+.timing-card:nth-child(even) {
+  background-color: var(--cream);
+}
+
+.timing-card:hover {
+  background-color: #fff0d4;
+  transform: translateX(5px);
+}
+
+.timing-activity {
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  color: var(--brown-dark);
+}
+
+.timing-icon {
+  color: var(--saffron);
+  margin-right: 1rem;
+  font-size: 1.25rem;
+}
+
+.timing-time {
+  font-weight: 600;
+  color: var(--deep-red);
+}
+
+/* ==========================================================================
+   7. Event Cards
+   ========================================================================== */
+.event-card {
+  position: relative;
+}
+
+.event-date-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background-color: var(--saffron);
+  color: var(--white);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 2;
+  min-width: 70px;
+}
+
+.event-date-badge .day {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.event-date-badge .month {
+  display: block;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 2px;
+}
+
+.past-event {
+  opacity: 0.85;
+}
+
+.past-event .card-img-top {
+  filter: grayscale(40%) contrast(90%);
+}
+
+.past-event .event-date-badge {
+  background-color: var(--text-muted);
+}
+
+/* ==========================================================================
+   8. Gallery
+   ========================================================================== */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.gallery-item {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  aspect-ratio: 1 / 1;
+  box-shadow: var(--shadow-warm);
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.gallery-item:hover img {
+  transform: scale(1.1);
+}
+
+.gallery-item .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to top, rgba(44, 24, 16, 0.8) 0%, rgba(44, 24, 16, 0.2) 50%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  display: flex;
+  align-items: flex-end;
+  padding: 1.5rem;
+}
+
+.gallery-item:hover .overlay {
+  opacity: 1;
+}
+
+.gallery-title {
+  color: var(--white);
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  margin: 0;
+  transform: translateY(20px);
+  transition: transform 0.3s ease;
+}
+
+.gallery-item:hover .gallery-title {
+  transform: translateY(0);
+}
+
+/* Template gallery card styles */
+.gallery-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.gallery-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-warm-hover);
+}
+
+.gallery-img {
+  transition: transform 0.4s ease;
+}
+
+.gallery-card:hover .gallery-img {
+  transform: scale(1.05);
+}
+
+.gallery-overlay {
+  background: rgba(44, 24, 16, 0.65);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.gallery-card:hover .gallery-overlay,
+.gallery-card:focus-within .gallery-overlay {
+  opacity: 1;
+}
+
+/* Modal styling for gallery */
+#galleryModal .modal-content {
+  background-color: transparent;
+  border: none;
+}
+#galleryModal .modal-header {
+  border-bottom: none;
+  padding: 1rem 1rem 0;
+}
+#galleryModal .btn-close {
+  background-color: var(--white);
+  opacity: 0.8;
+  border-radius: 50%;
+  padding: 0.5rem;
+}
+#galleryModal .modal-body {
+  padding: 0;
+  text-align: center;
+}
+#galleryModalImage {
+  max-width: 100%;
+  max-height: 80vh;
+  border-radius: 8px;
+  box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+}
+.gallery-modal-caption {
+  background-color: rgba(44, 24, 16, 0.9);
+  color: var(--white);
+  padding: 1.5rem;
+  border-radius: 0 0 8px 8px;
+  margin-top: -5px;
+  text-align: left;
+}
+
+/* ==========================================================================
+   9. Donation Page
+   ========================================================================== */
+.donation-card {
+  border-top: 4px solid var(--gold);
+}
+
+.bank-details {
+  background-color: var(--cream-light);
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(44, 24, 16, 0.1);
+}
+
+.detail-row:last-child {
+  border-bottom: none;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: var(--brown-dark);
+}
+
+.detail-value {
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-copy {
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.btn-copy:hover {
+  background: var(--gold);
+  color: var(--white);
+}
+
+.qr-container {
+  text-align: center;
+  padding: 2rem;
+  background-color: var(--white);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.qr-code {
+  max-width: 200px;
+  border: 1px solid #eee;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+/* Copy Toast */
+.copy-toast {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background-color: var(--brown-dark);
+  color: var(--white);
+  padding: 12px 24px;
+  border-radius: 30px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  z-index: 9999;
+  font-weight: 500;
+  transform: translateY(100px);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.copy-toast.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* ==========================================================================
+   10. Contact Page
+   ========================================================================== */
+.contact-form .form-control,
+.contact-form .form-select {
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  transition: var(--transition-smooth);
+}
+
+.contact-form .form-control:focus,
+.contact-form .form-select:focus {
+  border-color: var(--saffron);
+  box-shadow: 0 0 0 0.25rem rgba(255, 107, 0, 0.25);
+}
+
+.contact-info-card {
+  display: flex;
+  margin-bottom: 1.5rem;
+  padding: 1.5rem;
+  background-color: var(--white);
+  border-radius: 12px;
+  box-shadow: var(--shadow-warm);
+}
+
+.contact-info-icon {
+  width: 50px;
+  height: 50px;
+  background-color: var(--cream-light);
+  color: var(--saffron);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin-right: 1.5rem;
+  flex-shrink: 0;
+}
+
+.contact-info-content h4 {
+  font-size: 1.1rem;
+  margin-bottom: 0.25rem;
+}
+
+.contact-info-content p {
+  color: var(--text-muted);
+  margin-bottom: 0;
+}
+
+/* ==========================================================================
+   11. Footer (.footer-section)
+   ========================================================================== */
+.footer-section {
+  background-color: var(--brown-dark);
+  color: var(--cream);
+  padding-top: 60px;
+  border-top: 4px solid var(--gold);
+}
+
+.footer-brand {
+  font-family: var(--font-heading);
+  color: var(--gold);
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.footer-desc {
+  color: rgba(255, 248, 220, 0.7);
+  margin-bottom: 1.5rem;
+}
+
+.footer-heading {
+  color: var(--gold);
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+  padding-bottom: 10px;
+}
+
+.footer-heading::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  height: 2px;
+  background-color: var(--saffron);
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li {
+  margin-bottom: 0.75rem;
+}
+
+.footer-links a {
+  color: rgba(255, 248, 220, 0.8);
+  transition: var(--transition-smooth);
+}
+
+.footer-links a:hover {
+  color: var(--gold);
+  padding-left: 5px;
+}
+
+.footer-contact li {
+  display: flex;
+  margin-bottom: 1rem;
+  color: rgba(255, 248, 220, 0.8);
+}
+
+.footer-contact i {
+  color: var(--saffron);
+  margin-right: 15px;
+  margin-top: 5px;
+}
+
+.footer-bottom {
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 1.5rem 0;
+  margin-top: 3rem;
+  text-align: center;
+}
+
+.footer-bottom p {
+  margin: 0;
+  color: rgba(255, 248, 220, 0.6);
+  font-size: 0.9rem;
+}
+
+/* ==========================================================================
+   12. Announcement Cards
+   ========================================================================== */
+.announcement-card {
+  border-left: 4px solid var(--saffron);
+  margin-bottom: 1.5rem;
+  border-radius: 0 8px 8px 0;
+}
+
+.announcement-card .card-body {
+  padding: 1.25rem;
+}
+
+.announcement-date {
+  color: var(--saffron);
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.announcement-title {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+/* ==========================================================================
+   13. Page Headers
+   ========================================================================== */
+.page-header {
+  background: linear-gradient(135deg, rgba(44, 24, 16, 0.95) 0%, rgba(229, 91, 0, 0.9) 100%);
+  padding: 120px 0 60px;
+  text-align: center;
+  color: var(--white);
+  margin-bottom: 3rem;
+}
+
+.page-header-title {
+  font-family: var(--font-heading);
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.breadcrumb {
+  justify-content: center;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+}
+
+.breadcrumb-item a {
+  color: var(--cream);
+}
+
+.breadcrumb-item a:hover {
+  color: var(--gold);
+}
+
+.breadcrumb-item.active {
+  color: var(--gold);
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+  color: var(--cream);
+  content: "›";
+}
+
+/* ==========================================================================
+   14. Buttons
+   ========================================================================== */
+.btn {
+  font-weight: 500;
+  padding: 0.75rem 1.5rem;
+  border-radius: 30px;
+  transition: var(--transition-smooth);
+}
+
+.btn-saffron {
+  background-color: var(--saffron);
+  color: var(--white);
+  border: none;
+  padding: 12px 30px;
+}
+
+.btn-saffron:hover {
+  background-color: var(--saffron-dark);
+  color: var(--white);
+  box-shadow: 0 4px 10px rgba(229, 91, 0, 0.3);
+  transform: translateY(-2px);
+}
+
+.btn-outline-gold {
+  background-color: transparent;
+  color: var(--gold);
+  border: 2px solid var(--gold);
+  padding: 10px 28px;
+}
+
+.btn-outline-gold:hover {
+  background-color: var(--gold);
+  color: var(--brown-dark);
+}
+
+/* ==========================================================================
+   15. Utility Classes
+   ========================================================================== */
+.text-saffron { color: var(--saffron-text) !important; }
+.text-gold { color: var(--gold) !important; }
+.text-brown { color: var(--brown-dark) !important; }
+
+.bg-cream { background-color: var(--cream) !important; }
+.bg-cream-light { background-color: var(--cream-light) !important; }
+
+.divider-ornament {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 2rem 0;
+}
+
+.divider-ornament::before,
+.divider-ornament::after {
+  content: '';
+  height: 2px;
+  width: 50px;
+  background-color: var(--gold);
+}
+
+.divider-ornament span {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background-color: var(--saffron);
+  border-radius: 50%;
+  margin: 0 15px;
+  position: relative;
+}
+
+.divider-ornament span::before,
+.divider-ornament span::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  background-color: var(--gold);
+  border-radius: 50%;
+}
+
+.divider-ornament span::before { left: -12px; }
+.divider-ornament span::after { right: -12px; }
+
+/* ==========================================================================
+   16. Responsive Design
+   ========================================================================== */
+@media (max-width: 1199px) {
+  .hero-title { font-size: 3.5rem; }
+}
+
+@media (max-width: 991px) {
+  .section-padding { padding: 60px 0; }
+  .hero-section { min-height: 70vh; }
+  .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+  .navbar-temple { padding: 0.5rem 0; }
+}
+
+@media (max-width: 767px) {
+  .section-padding { padding: 50px 0; }
+  .section-heading { font-size: 2rem; }
+  .hero-title { font-size: 2.5rem; }
+  .hero-subtitle { font-size: 1.25rem; }
+  .page-header { padding: 100px 0 50px; }
+  .page-header-title { font-size: 2.25rem; }
+  .footer-section { padding-top: 40px; }
+  
+  .timing-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .timing-time {
+    margin-top: 0.5rem;
+    padding-left: 2.25rem;
+  }
+}
+
+@media (max-width: 575px) {
+  .hero-section { min-height: 60vh; padding: 80px 0; }
+  .gallery-grid { grid-template-columns: 1fr; }
+  .detail-row { flex-direction: column; align-items: flex-start; }
+  .detail-value { margin-top: 0.5rem; width: 100%; justify-content: space-between; }
+  /* Scope full-width buttons to primary action buttons, excluding small/copy/nav/modal buttons */
+  .btn:not(.btn-sm):not(.btn-copy):not(.navbar-toggler):not(.btn-close):not(.btn-link) { width: 100%; margin-bottom: 0.5rem; }
+  .hero-content .btn { width: auto; }
+}
+
+/* ==========================================================================
+   17. Animations
+   ========================================================================== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+
+/* ==========================================================================
+   18. CTA Section
+   ========================================================================== */
+.cta-section {
+  background: linear-gradient(135deg, var(--saffron-dark) 0%, var(--saffron) 100%);
+  color: var(--white);
+  padding: 80px 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-section::before,
+.cta-section::after {
+  content: '';
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+}
+
+.cta-section::before {
+  top: -100px;
+  left: -100px;
+}
+
+.cta-section::after {
+  bottom: -100px;
+  right: -100px;
+}
+
+.cta-title {
+  font-family: var(--font-heading);
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+  color: var(--white);
+}
+
+.cta-text {
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  opacity: 0.9;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.cta-section .btn-outline-gold {
+  border-color: var(--white);
+  color: var(--white);
+}
+
+.cta-section .btn-outline-gold:hover {
+  background-color: var(--white);
+  color: var(--saffron);
+}

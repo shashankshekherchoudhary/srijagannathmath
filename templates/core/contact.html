@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold" style="color: #8B0000;">Contact Us</h1>
+        <hr class="w-25 mx-auto" style="border-top: 3px solid #DAA520;">
+        <p class="lead text-muted">We would love to hear from you. Get in touch with us.</p>
+    </div>
+
+    <div class="row g-5">
+        <!-- Contact Form -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm p-4 h-100 bg-light">
+                <h3 class="mb-4" style="color: #2C1810;">Send us a Message</h3>
+                
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <form method="post" action="{% url 'contact' %}">
+                    {% csrf_token %}
+                    {# Honeypot anti-spam: hidden from real users, bots fill it automatically #}
+                    <div class="ohnohoney">{{ form.website }}</div>
+                    
+                    <div class="mb-3">
+                        {{ form.name.label_tag }}
+                        {{ form.name }}
+                        {% if form.name.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.name.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.email.label_tag }}
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.email.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.phone.label_tag }}
+                        {{ form.phone }}
+                        {% if form.phone.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.phone.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-4">
+                        {{ form.message.label_tag }}
+                        {{ form.message }}
+                        {% if form.message.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.message.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <button type="submit" class="btn btn-lg w-100" style="background-color: #FF6B00; color: white;">
+                        <i class="bi bi-send me-2"></i>Send Message
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Contact Info & Map -->
+        <div class="col-lg-6">
+            <div class="d-flex flex-column gap-4 h-100">
+                <div class="card border-0 shadow-sm p-4">
+                    <h3 class="mb-4" style="color: #2C1810;">Contact Information</h3>
+                    
+                    <ul class="list-unstyled mb-0 fs-5">
+                        <li class="d-flex align-items-start mb-4">
+                            <div class="bg-light p-3 rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                <i class="bi bi-geo-alt-fill text-danger fs-4"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-1 text-muted">Address</h6>
+                                {% if temple_info and temple_info.address %}
+                                    {{ temple_info.address }}
+                                {% else %}
+                                    Tetri-Dandari, Begusarai, Bihar
+                                {% endif %}
+                            </div>
+                        </li>
+                        
+                        <li class="d-flex align-items-start mb-4">
+                            <div class="bg-light p-3 rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                <i class="bi bi-telephone-fill text-danger fs-4"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-1 text-muted">Phone</h6>
+                                {% if temple_info and temple_info.phone %}
+                                    {{ temple_info.phone }}
+                                {% else %}
+                                    Not available
+                                {% endif %}
+                            </div>
+                        </li>
+                        
+                        <li class="d-flex align-items-start">
+                            <div class="bg-light p-3 rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                <i class="bi bi-envelope-fill text-danger fs-4"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-1 text-muted">Email</h6>
+                                {% if temple_info and temple_info.email %}
+                                    {{ temple_info.email }}
+                                {% else %}
+                                    Not available
+                                {% endif %}
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="card border-0 shadow-sm flex-grow-1 overflow-hidden">
+                    {% if temple_info and temple_info.map_embed_url %}
+                        <iframe src="{{ temple_info.map_embed_url }}" width="100%" height="100%" style="border:0; min-height: 250px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    {% else %}
+                        <div class="bg-light d-flex flex-column align-items-center justify-content-center h-100 w-100" style="min-height: 250px;">
+                            <i class="bi bi-map text-muted fs-1 mb-2"></i>
+                            <span class="text-muted">Map not available</span>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
