@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
+    'cloudinary_storage',
+    'cloudinary',
     'core',
 ]
 
@@ -133,9 +135,54 @@ STORAGES = {
 }
 WHITENOISE_MANIFEST_STRICT = False
 
+# Cloudinary Media Storage (Active if credentials are set in environment)
+CLOUDINARY_CLOUD_NAME = os.environ.get('CLOUDINARY_CLOUD_NAME')
+CLOUDINARY_API_KEY = os.environ.get('CLOUDINARY_API_KEY')
+CLOUDINARY_API_SECRET = os.environ.get('CLOUDINARY_API_SECRET')
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': CLOUDINARY_CLOUD_NAME,
+    'API_KEY': CLOUDINARY_API_KEY,
+    'API_SECRET': CLOUDINARY_API_SECRET,
+}
+
+if CLOUDINARY_CLOUD_NAME or os.environ.get('CLOUDINARY_URL'):
+    STORAGES['default'] = {
+        'BACKEND': 'cloudinary_storage.storage.MediaCloudinaryStorage',
+    }
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = DATA_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Production Logging Configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '[{asctime}] {levelname} {name}: {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}

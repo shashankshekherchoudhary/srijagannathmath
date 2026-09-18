@@ -46,8 +46,8 @@ class TempleInformation(models.Model):
 class TempleTiming(models.Model):
     activity_name = models.CharField(max_length=100)
     time = models.CharField(max_length=100, help_text='e.g., 5:00 AM - 6:00 AM')
-    display_order = models.PositiveIntegerField(default=0)
-    is_active = models.BooleanField(default=True)
+    display_order = models.PositiveIntegerField(default=0, db_index=True)
+    is_active = models.BooleanField(default=True, db_index=True)
     
     class Meta:
         ordering = ['display_order']
@@ -63,10 +63,10 @@ class Event(models.Model):
     slug = models.SlugField(max_length=250, unique=True, blank=True)
     description = models.TextField()
     image = models.ImageField(upload_to='events/', blank=True, null=True)
-    date = models.DateField()
+    date = models.DateField(db_index=True)
     time = models.TimeField(blank=True, null=True)
     location = models.CharField(max_length=200, default='Sri Jagannath Math')
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
@@ -94,8 +94,8 @@ class Event(models.Model):
 class Announcement(models.Model):
     title = models.CharField(max_length=200)
     content = models.TextField()
-    published_date = models.DateField(default=timezone.now)
-    is_active = models.BooleanField(default=True)
+    published_date = models.DateField(default=timezone.now, db_index=True)
+    is_active = models.BooleanField(default=True, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
