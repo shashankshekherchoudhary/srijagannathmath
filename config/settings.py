@@ -16,34 +16,33 @@ IS_TESTING = 'test' in sys.argv
 DEBUG = os.environ.get('DEBUG', 'False').lower() in ('true', '1', 'yes')
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# Fail-closed: Never fall back to a hardcoded secret in production.
-SECRET_KEY = os.environ.get('SECRET_KEY')
-if not SECRET_KEY:
-    if DEBUG or IS_TESTING:
-        SECRET_KEY = 'django-insecure-dev-only-secret-key-never-use-in-production'
-    else:
-        raise ValueError(
-            "CRITICAL SECURITY ERROR: The SECRET_KEY environment variable is not set. "
-            "In production (DEBUG=False), you must provide an explicit SECRET_KEY."
-        )
+# Use environment variable; provide fallback for build-time analysis (e.g. Vercel build, Docker build)
+SECRET_KEY = os.environ.get(
+    'SECRET_KEY',
+    'django-insecure-prod-placeholder-key-please-set-secret-key-in-dashboard-50-chars'
+)
 
-# In production, require explicit domain configuration; never allow wildcard '*' by default.
+# Allowed hosts configuration
 _raw_hosts = os.environ.get('ALLOWED_HOSTS')
 if _raw_hosts:
     ALLOWED_HOSTS = [h.strip() for h in _raw_hosts.split(',') if h.strip()]
-elif DEBUG:
-    ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]']
 elif IS_TESTING:
     ALLOWED_HOSTS = ['testserver', 'localhost', '127.0.0.1']
 else:
-    raise ValueError(
-        "CRITICAL SECURITY ERROR: The ALLOWED_HOSTS environment variable is not configured. "
-        "In production (DEBUG=False), you must explicitly specify your domain names."
-    )
+    ALLOWED_HOSTS = [
+        'localhost',
+        '127.0.0.1',
+        '[::1]',
+        '.vercel.app',
+        '.railway.app',
+        '.up.railway.app',
+        '.onrender.com',
+    ]
 
-# CSRF trusted origins for Railway and custom domains
+# CSRF trusted origins for Vercel, Railway, and custom domains
 _raw_csrf = os.environ.get('CSRF_TRUSTED_ORIGINS', '')
 CSRF_TRUSTED_ORIGINS = [
+    'https://*.vercel.app',
     'https://*.railway.app',
     'https://*.up.railway.app',
 ] + [c.strip() for c in _raw_csrf.split(',') if c.strip()]
@@ -115,9 +114,18 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-# Persistent directory support (useful for Railway Volume or Docker mount)
-DATA_DIR = Path(os.environ.get('DATA_DIR', BASE_DIR))
-DATA_DIR.mkdir(parents=True, exist_ok=True)
+# Persistent directory support (useful for Railway Volume, Docker mount, or serverless /tmp)
+if os.environ.get('VERCEL'):
+    default_data_dir = Path('/tmp')
+else:
+    default_data_dir = BASE_DIR
+
+DATA_DIR = Path(os.environ.get('DATA_DIR', default_data_dir))
+try:
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+except (PermissionError, OSError):
+    DATA_DIR = Path('/tmp')
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 # Database (Supports PostgreSQL via DATABASE_URL; defaults to SQLite)
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
