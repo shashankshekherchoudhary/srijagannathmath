@@ -26,7 +26,11 @@ class TempleInformation(models.Model):
         if not self.pk and TempleInformation.objects.exists():
             existing = TempleInformation.objects.first()
             self.pk = existing.pk
+            if 'force_insert' in kwargs:
+                kwargs['force_insert'] = False
         super().save(*args, **kwargs)
+        from django.core.cache import cache
+        cache.delete('global_temple_info')
 
     def clean(self):
         super().clean()
@@ -73,13 +77,16 @@ class Event(models.Model):
         ordering = ['-date']
         verbose_name = 'Event'
         verbose_name_plural = 'Events'
+        indexes = [
+            models.Index(fields=['is_active', 'date'], name='core_event_active_date_idx'),
+        ]
     
     def __str__(self):
         return self.title
     
     def save(self, *args, **kwargs):
         if not self.slug:
-            base_slug = slugify(self.title)
+            base_slug = slugify(self.title, allow_unicode=True)
             if not base_slug:
                 base_slug = 'event'
             slug = base_slug
@@ -102,6 +109,9 @@ class Announcement(models.Model):
         ordering = ['-published_date', '-created_at']
         verbose_name = 'Announcement'
         verbose_name_plural = 'Announcements'
+        indexes = [
+            models.Index(fields=['is_active', '-published_date'], name='core_ann_active_pub_idx'),
+        ]
     
     def __str__(self):
         return self.title
@@ -142,7 +152,11 @@ class DonationInformation(models.Model):
         if not self.pk and DonationInformation.objects.exists():
             existing = DonationInformation.objects.first()
             self.pk = existing.pk
+            if 'force_insert' in kwargs:
+                kwargs['force_insert'] = False
         super().save(*args, **kwargs)
+        from django.core.cache import cache
+        cache.delete('global_donation_info')
 
 
 class ContactMessage(models.Model):

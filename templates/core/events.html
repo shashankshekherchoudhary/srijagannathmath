@@ -46,17 +46,17 @@
             <nav aria-label="Upcoming events pagination" class="mt-4">
                 <ul class="pagination justify-content-center">
                     {% if upcoming_events.has_previous %}
-                    <li class="page-item"><a class="page-link" href="?upcoming_page={{ upcoming_events.previous_page_number }}">&laquo;</a></li>
+                    <li class="page-item"><a class="page-link" href="?upcoming_page={{ upcoming_events.previous_page_number }}{% if request.GET.past_page %}&past_page={{ request.GET.past_page }}{% endif %}">&laquo;</a></li>
                     {% endif %}
                     {% for num in upcoming_events.paginator.page_range %}
                         {% if upcoming_events.number == num %}
                         <li class="page-item active"><span class="page-link">{{ num }}</span></li>
                         {% elif num > upcoming_events.number|add:'-3' and num < upcoming_events.number|add:'3' %}
-                        <li class="page-item"><a class="page-link" href="?upcoming_page={{ num }}">{{ num }}</a></li>
+                        <li class="page-item"><a class="page-link" href="?upcoming_page={{ num }}{% if request.GET.past_page %}&past_page={{ request.GET.past_page }}{% endif %}">{{ num }}</a></li>
                         {% endif %}
                     {% endfor %}
                     {% if upcoming_events.has_next %}
-                    <li class="page-item"><a class="page-link" href="?upcoming_page={{ upcoming_events.next_page_number }}">&raquo;</a></li>
+                    <li class="page-item"><a class="page-link" href="?upcoming_page={{ upcoming_events.next_page_number }}{% if request.GET.past_page %}&past_page={{ request.GET.past_page }}{% endif %}">&raquo;</a></li>
                     {% endif %}
                 </ul>
             </nav>
@@ -99,17 +99,17 @@
             <nav aria-label="Past events pagination" class="mt-4">
                 <ul class="pagination justify-content-center">
                     {% if past_events.has_previous %}
-                    <li class="page-item"><a class="page-link" href="?past_page={{ past_events.previous_page_number }}">&laquo;</a></li>
+                    <li class="page-item"><a class="page-link" href="?past_page={{ past_events.previous_page_number }}{% if request.GET.upcoming_page %}&upcoming_page={{ request.GET.upcoming_page }}{% endif %}">&laquo;</a></li>
                     {% endif %}
                     {% for num in past_events.paginator.page_range %}
                         {% if past_events.number == num %}
                         <li class="page-item active"><span class="page-link">{{ num }}</span></li>
                         {% elif num > past_events.number|add:'-3' and num < past_events.number|add:'3' %}
-                        <li class="page-item"><a class="page-link" href="?past_page={{ num }}">{{ num }}</a></li>
+                        <li class="page-item"><a class="page-link" href="?past_page={{ num }}{% if request.GET.upcoming_page %}&upcoming_page={{ request.GET.upcoming_page }}{% endif %}">{{ num }}</a></li>
                         {% endif %}
                     {% endfor %}
                     {% if past_events.has_next %}
-                    <li class="page-item"><a class="page-link" href="?past_page={{ past_events.next_page_number }}">&raquo;</a></li>
+                    <li class="page-item"><a class="page-link" href="?past_page={{ past_events.next_page_number }}{% if request.GET.upcoming_page %}&upcoming_page={{ request.GET.upcoming_page }}{% endif %}">&raquo;</a></li>
                     {% endif %}
                 </ul>
             </nav>

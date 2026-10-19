@@ -1,6 +1,10 @@
+import logging
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.core.paginator import Paginator
+from django.core.cache import cache
+from django.http import JsonResponse
+from django.db import connection
 from django.utils import timezone
 from .models import (
     TempleInformation, TempleTiming, Event, Announcement,
@@ -8,10 +12,35 @@ from .models import (
 )
 from .forms import ContactForm
 
+logger = logging.getLogger('core')
+
 
 def get_temple_info():
-    """Helper to get temple information singleton."""
-    return TempleInformation.objects.first()
+    """Helper to get temple information singleton with cache."""
+    info = cache.get('global_temple_info')
+    if info is None:
+        info = TempleInformation.objects.first()
+        cache.set('global_temple_info', info, 86400)
+    return info
+
+
+def health_check_view(request):
+    """Liveness and readiness probe for container orchestrators and monitoring."""
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
+        db_status = "connected"
+    except Exception as exc:
+        logger.error(f"Health check database failure: {exc}")
+        return JsonResponse(
+            {"status": "unhealthy", "database": "unavailable"}, status=503
+        )
+
+    return JsonResponse({
+        "status": "ok",
+        "database": db_status,
+        "timestamp": timezone.now().isoformat(),
+    })
 
 
 def home_view(request):
@@ -20,8 +49,9 @@ def home_view(request):
     upcoming_events = Event.objects.filter(
         is_active=True, date__gte=timezone.now().date()
     ).order_by('date')[:3]
-    announcements = Announcement.objects.filter(is_active=True)[:5]
-    gallery_images = GalleryImage.objects.all()[:6]
+    # Sliced to match home template UI grid layouts (3 announcements, 4 gallery items)
+    announcements = Announcement.objects.filter(is_active=True)[:3]
+    gallery_images = GalleryImage.objects.all()[:4]
 
     context = {
         'temple_info': temple_info,
@@ -100,7 +130,10 @@ def gallery_view(request):
 
 
 def donate_view(request):
-    donation_info = DonationInformation.objects.first()
+    donation_info = cache.get('global_donation_info')
+    if donation_info is None:
+        donation_info = DonationInformation.objects.first()
+        cache.set('global_donation_info', donation_info, 86400)
     context = {'donation_info': donation_info}
     return render(request, 'core/donate.html', context)
 
@@ -109,11 +142,24 @@ def contact_view(request):
     temple_info = get_temple_info()
 
     if request.method == 'POST':
+        # Simple IP-based rate limiting via cache (max 5 submissions per 5 minutes)
+        ip_addr = request.META.get('REMOTE_ADDR', '127.0.0.1')
+        rate_key = f'contact_rate_{ip_addr}'
+        submission_count = cache.get(rate_key, 0)
+        if submission_count >= 5:
+            logger.warning(f"Contact form rate limit reached for IP: {ip_addr}")
+            messages.error(request, 'Too many messages sent. Please wait a few minutes before trying again.')
+            return render(request, 'core/contact.html', {'form': ContactForm(request.POST), 'temple_info': temple_info})
+
         form = ContactForm(request.POST)
         if form.is_valid():
-            form.save()
+            contact_msg = form.save()
+            cache.set(rate_key, submission_count + 1, 300)
+            logger.info(f"New contact message received from {contact_msg.email} (ID: {contact_msg.pk})")
             messages.success(request, 'Thank you for your message! We will get back to you soon. 🙏')
             return redirect('contact')
+        else:
+            logger.info("Contact form submission failed validation.")
     else:
         form = ContactForm()
 
@@ -122,3 +168,4 @@ def contact_view(request):
         'temple_info': temple_info,
     }
     return render(request, 'core/contact.html', context)
+

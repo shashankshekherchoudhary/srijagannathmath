@@ -1,5 +1,7 @@
 import os
+import sys
 from pathlib import Path
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -7,20 +9,37 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-# In production, set the SECRET_KEY environment variable.
-SECRET_KEY = os.environ.get('SECRET_KEY', 'sri-jagannath-math-prod-key-92837498237410293847561')
+IS_TESTING = 'test' in sys.argv
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # Set DEBUG=False in production via environment variable.
 DEBUG = os.environ.get('DEBUG', 'False').lower() in ('true', '1', 'yes')
 
-# In production, allow Railway subdomains and any configured domains
-_raw_hosts = os.environ.get('ALLOWED_HOSTS', '*')
-if _raw_hosts == '*':
-    ALLOWED_HOSTS = ['*']
-else:
+# SECURITY WARNING: keep the secret key used in production secret!
+# Fail-closed: Never fall back to a hardcoded secret in production.
+SECRET_KEY = os.environ.get('SECRET_KEY')
+if not SECRET_KEY:
+    if DEBUG or IS_TESTING:
+        SECRET_KEY = 'django-insecure-dev-only-secret-key-never-use-in-production'
+    else:
+        raise ValueError(
+            "CRITICAL SECURITY ERROR: The SECRET_KEY environment variable is not set. "
+            "In production (DEBUG=False), you must provide an explicit SECRET_KEY."
+        )
+
+# In production, require explicit domain configuration; never allow wildcard '*' by default.
+_raw_hosts = os.environ.get('ALLOWED_HOSTS')
+if _raw_hosts:
     ALLOWED_HOSTS = [h.strip() for h in _raw_hosts.split(',') if h.strip()]
+elif DEBUG:
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]']
+elif IS_TESTING:
+    ALLOWED_HOSTS = ['testserver', 'localhost', '127.0.0.1']
+else:
+    raise ValueError(
+        "CRITICAL SECURITY ERROR: The ALLOWED_HOSTS environment variable is not configured. "
+        "In production (DEBUG=False), you must explicitly specify your domain names."
+    )
 
 # CSRF trusted origins for Railway and custom domains
 _raw_csrf = os.environ.get('CSRF_TRUSTED_ORIGINS', '')
@@ -31,6 +50,24 @@ CSRF_TRUSTED_ORIGINS = [
 
 # Reverse proxy SSL header (essential for Railway/Cloudflare HTTPS termination)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Production Security Headers
+if not DEBUG and not IS_TESTING:
+    SECURE_SSL_REDIRECT = os.environ.get('SECURE_SSL_REDIRECT', 'True').lower() in ('true', '1', 'yes')
+    SECURE_HSTS_SECONDS = int(os.environ.get('SECURE_HSTS_SECONDS', '31536000'))
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = 'DENY'
+    SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
+    SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin'
+
+# Session hardening (applies in all modes)
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_AGE = 3600  # 1 hour for admin sessions
+SESSION_COOKIE_SAMESITE = 'Lax'
 
 # Application definition
 INSTALLED_APPS = [
@@ -82,12 +119,21 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATA_DIR = Path(os.environ.get('DATA_DIR', BASE_DIR))
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 
-# Database
+# Database (Supports PostgreSQL via DATABASE_URL; defaults to SQLite)
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 DATABASES = {
+    'default': dj_database_url.config(
+        default=f"sqlite:///{DATA_DIR / 'db.sqlite3'}",
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
+}
+
+# In-Memory Cache (reduces duplicate DB hits for singleton institutional data)
+CACHES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': DATA_DIR / 'db.sqlite3',
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'sri-jagannath-math-cache',
     }
 }
 
@@ -135,21 +181,22 @@ STORAGES = {
 }
 WHITENOISE_MANIFEST_STRICT = False
 
-# Cloudinary Media Storage (Active if credentials are set in environment)
+# Cloudinary Media Storage (Active if credentials or CLOUDINARY_URL are set)
+CLOUDINARY_URL = os.environ.get('CLOUDINARY_URL')
 CLOUDINARY_CLOUD_NAME = os.environ.get('CLOUDINARY_CLOUD_NAME')
 CLOUDINARY_API_KEY = os.environ.get('CLOUDINARY_API_KEY')
 CLOUDINARY_API_SECRET = os.environ.get('CLOUDINARY_API_SECRET')
 
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': CLOUDINARY_CLOUD_NAME,
-    'API_KEY': CLOUDINARY_API_KEY,
-    'API_SECRET': CLOUDINARY_API_SECRET,
-}
-
-if CLOUDINARY_CLOUD_NAME or os.environ.get('CLOUDINARY_URL'):
+if CLOUDINARY_URL or CLOUDINARY_CLOUD_NAME:
     STORAGES['default'] = {
         'BACKEND': 'cloudinary_storage.storage.MediaCloudinaryStorage',
     }
+    if CLOUDINARY_CLOUD_NAME:
+        CLOUDINARY_STORAGE = {
+            'CLOUD_NAME': CLOUDINARY_CLOUD_NAME,
+            'API_KEY': CLOUDINARY_API_KEY,
+            'API_SECRET': CLOUDINARY_API_SECRET,
+        }
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = DATA_DIR / 'media'
@@ -184,5 +231,11 @@ LOGGING = {
             'level': 'INFO',
             'propagate': False,
         },
+        'core': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
     },
 }
+
